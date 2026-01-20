@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animated Nepali Text</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
+
+<style>
+body, html {
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: #ffe6eb;
+    overflow:hidden;
+    font-family: 'Baloo 2', cursive;
+}
+
+#container {
+    width: 90vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    border-radius: 20px;
+    background: #fff0f5;
+    font-size: 7vw;
+    color: #ff4d6d;
+    position: relative;
+    line-height: 1.4;
+    box-shadow: 0 0 40px rgba(0,0,0,0.2);
+}
+
+.line {
+    display: block;
+    margin: 10px 0;
+}
+
+.letter {
+    display:inline-block;
+    opacity:0;
+    transform: translateY(30px);
+    transition: all 0.4s ease;
+}
+
+.balloon {
+    width: 40px;
+    height: 50px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -60px;
+    animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity:1; }
+    100% { transform: translateY(-120vh) rotate(360deg); opacity:0; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="container">
+    <span class="line" id="line1"></span>
+    <span class="line" id="line2"></span>
+    <span class="line" id="line3"></span>
+</div>
+
+<script>
+const line1Text = "सागर लाइ भोट";
+const line2Text = "चोर हरु लाइ चोट";
+const line3Text = "जय 🔔";
+
+const line1 = document.getElementById("line1");
+const line2 = document.getElementById("line2");
+const line3 = document.getElementById("line3");
+
+const segmenter = new Intl.Segmenter('ne', { granularity:'grapheme' });
+
+function createLetters(text, parent) {
+    for (const segment of segmenter.segment(text)) {
+        const span = document.createElement("span");
+        span.classList.add("letter");
+        span.textContent = segment.segment;
+        parent.appendChild(span);
+    }
+}
+
+createLetters(line1Text, line1);
+createLetters(line2Text, line2);
+createLetters(line3Text, line3);
+
+const letters = document.querySelectorAll(".letter");
+let i = 0;
+
+function animateLetter() {
+    if (i < letters.length) {
+        letters[i].style.opacity = "1";
+        letters[i].style.transform = "translateY(0)";
+        i++;
+        setTimeout(animateLetter, 150);
+    } else {
+        triggerCelebration();
+    }
+}
+
+setTimeout(animateLetter, 500);
+
+function triggerCelebration() {
+
+    // 🔔 Background image starts WHEN balloons start
+    document.body.style.backgroundImage =
+      "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQqiwm2E4gB7Cl3yICPj5ZdSJ10wO44qETpQ&s')";
+    document.body.style.backgroundSize = "fit";
+    document.body.style.backgroundPosition = "center";
+
+    document.getElementById("container").style.background = "rgba(255,240,245,0.85)";
+
+    const colors = ["#ff4d6d","#ffb3d9","#ff66b3","#ff99cc","#ff1a75"];
+
+    for (let j = 0; j < 15; j++) {
+        const balloon = document.createElement("div");
+        balloon.classList.add("balloon");
+        balloon.style.background = colors[Math.floor(Math.random() * colors.length)];
+        balloon.style.left = Math.random() * 90 + "vw";
+        balloon.style.animationDuration = (3 + Math.random() * 3) + "s";
+        document.body.appendChild(balloon);
+        setTimeout(() => balloon.remove(), 6000);
+    }
+}
+</script>
+
+</body>
+</html>
